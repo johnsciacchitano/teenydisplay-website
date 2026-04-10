@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TeenyDisplay — External Display Control for Mac</title>
+    <meta name="description" content="Control your external monitor's brightness, contrast, volume, and input source from the Mac menu bar. DDC/CI, keyboard shortcuts, presets, and more. $9.99 one-time.">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="TeenyDisplay — External Display Control for Mac">
+    <meta property="og:description" content="Control your external monitor's brightness, contrast, volume, and input source from the Mac menu bar. $9.99 one-time.">
+    <meta property="og:image" content="images/og-image.png">
+    <meta property="og:url" content="https://teenydisplay.com">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="images/favicon.png">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+
+    <style>
+        /* Fraunces — brand name font, loaded locally */
+        @font-face {
+            font-family: 'Fraunces';
+            src: url('fonts/Fraunces_72pt-Bold.ttf') format('truetype');
+            font-weight: 700;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        /* ============================================
+           DESIGN TOKENS
+           ============================================ */
+        :root {
+            --font-display: 'DM Serif Display', serif;
+            --font-body: 'DM Sans', sans-serif;
+
+            --orange: #FF6B35;
+            --orange-hover: #E85A24;
+            --orange-light: #FFF3EE;
+            --orange-glow: rgba(255, 107, 53, 0.15);
+            --text-primary: #1A1A2E;
+            --text-secondary: #5A5A72;
+            --text-muted: #8E8EA0;
+            --bg-white: #FFFFFF;
+            --bg-cream: #FAFAF8;
+            --bg-light: #F5F5F3;
+            --border: #E8E8E4;
+            --border-light: #F0F0EC;
+
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.06);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.06), 0 2px 4px rgba(0,0,0,0.04);
+            --shadow-lg: 0 12px 40px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.04);
+            --shadow-xl: 0 20px 60px rgba(0,0,0,0.10), 0 8px 20px rgba(0,0,0,0.06);
+            --shadow-screenshot: 0 16px 48px rgba(0,0,0,0.12), 0 6px 16px rgba(0,0,0,0.06);
+
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+
+            --max-width: 1200px;
+        }
+
+        /* ============================================
+           RESET & BASE
+           ============================================ */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: var(--font-body);
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background: var(--bg-white);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        img { max-width: 100%; display: block; }
+        a { color: var(--orange); text-decoration: none; }
+        a:hover { color: var(--orange-hover); }
+
+        .brand-name {
+            font-family: 'Fraunces', serif;
+            font-weight: 700;
+        }
+
+        .section-inner {
+            max-width: var(--max-width);
+            margin: 0 auto;
+        }
+
+        /* ============================================
+           BUTTONS
+           ============================================ */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-body);
+            font-weight: 600;
+            font-size: 15px;
+            padding: 10px 22px;
+            border-radius: var(--radius-sm);
+            transition: all 0.2s ease;
+            cursor: pointer;
+            text-decoration: none;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--orange);
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(255, 107, 53, 0.3);
+        }
+        .btn-primary:hover {
+            background: var(--orange-hover);
+            color: #fff;
+            box-shadow: 0 4px 16px rgba(255, 107, 53, 0.4);
+            transform: translateY(-1px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--text-primary);
+            border: 1.5px solid var(--border);
+        }
+        .btn-outline:hover {
+            border-color: var(--orange);
+            color: var(--orange);
+            background: var(--orange-light);
+        }
+
+        .btn-large {
+            padding: 14px 32px;
+            font-size: 16px;
+            border-radius: var(--radius-md);
+        }
+
+        /* ============================================
+           NAV
+           ============================================ */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border-bottom: 1px solid var(--border-light);
+            transition: box-shadow 0.3s ease;
+        }
+        nav.scrolled {
+            box-shadow: var(--shadow-sm);
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--text-primary);
+        }
+        .nav-brand img {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+        }
+        .nav-brand .brand-name {
+            font-size: 20px;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        /* ============================================
+           HERO
+           ============================================ */
+        .hero {
+            padding: 140px 40px 80px;
+            text-align: center;
+            background: var(--bg-white);
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -60%);
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(255, 107, 53, 0.04) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero-content {
+            position: relative;
+            max-width: 720px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-family: var(--font-display);
+            font-size: clamp(42px, 6vw, 64px);
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+        }
+        .hero h1 em {
+            font-style: italic;
+            color: var(--orange);
+        }
+
+        .hero-sub {
+            font-size: 20px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        .hero-body {
+            font-size: 17px;
+            color: var(--text-muted);
+            max-width: 540px;
+            margin: 0 auto 32px;
+            line-height: 1.7;
+        }
+
+        .hero-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 14px;
+            margin-bottom: 48px;
+        }
+
+        .hero-media {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        .hero-media .screenshot-placeholder {
+            background: var(--bg-light);
+            border: 2px dashed var(--border);
+            border-radius: var(--radius-lg);
+            padding: 80px 40px;
+            color: var(--text-muted);
+            font-size: 14px;
+            text-align: center;
+        }
+
+        /* ============================================
+           FEATURE CARD GRID
+           ============================================ */
+        .features {
+            padding: 90px 40px;
+        }
+        .features.bg-cream { background: var(--bg-cream); }
+        .features.bg-white { background: var(--bg-white); }
+
+        .features h2 {
+            font-family: var(--font-display);
+            font-size: 36px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 12px;
+        }
+        .features .section-subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 17px;
+            margin-bottom: 48px;
+            max-width: 540px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            max-width: var(--max-width);
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: var(--bg-white);
+            border: 1.5px solid var(--border-light);
+            border-radius: 14px;
+            padding: 28px 24px;
+            transition: all 0.2s ease;
+        }
+        .feature-card:hover {
+            border-color: var(--border);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .feature-card .icon {
+            font-size: 28px;
+            margin-bottom: 14px;
+        }
+        .feature-card h3 {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* ============================================
+           ALTERNATING SHOWCASE ROWS
+           ============================================ */
+        .showcase {
+            padding: 90px 40px;
+        }
+        .showcase.bg-cream { background: var(--bg-cream); }
+        .showcase.bg-white { background: var(--bg-white); }
+
+        .showcase-row {
+            display: flex;
+            align-items: center;
+            gap: 60px;
+            max-width: var(--max-width);
+            margin: 0 auto 60px;
+        }
+        .showcase-row:last-child { margin-bottom: 0; }
+        .showcase-row.reverse { flex-direction: row-reverse; }
+
+        .showcase-text {
+            flex: 1;
+        }
+        .showcase-text h3 {
+            font-family: var(--font-display);
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+        .showcase-text p {
+            font-size: 16px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        .showcase-image {
+            flex: 1;
+        }
+        .showcase-image .screenshot-placeholder {
+            background: var(--bg-light);
+            border: 2px dashed var(--border);
+            border-radius: var(--radius-lg);
+            padding: 60px 40px;
+            color: var(--text-muted);
+            font-size: 13px;
+            text-align: center;
+        }
+
+        /* ============================================
+           FAQ
+           ============================================ */
+        .faq-section {
+            padding: 100px 40px;
+            background: var(--bg-white);
+        }
+
+        .faq-section h2 {
+            font-family: var(--font-display);
+            font-size: 36px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .faq-list {
+            max-width: 680px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            border-bottom: 1px solid var(--border);
+        }
+        .faq-item:first-child {
+            border-top: 1px solid var(--border);
+        }
+
+        .faq-question {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            padding: 20px 0;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-family: var(--font-body);
+            text-align: left;
+        }
+        .faq-question::after {
+            content: '+';
+            font-size: 20px;
+            font-weight: 400;
+            color: var(--text-muted);
+            transition: transform 0.3s ease;
+            flex-shrink: 0;
+            margin-left: 16px;
+        }
+        .faq-item.open .faq-question::after {
+            transform: rotate(45deg);
+            color: var(--orange);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+        }
+        .faq-item.open .faq-answer {
+            max-height: 250px;
+            padding-bottom: 20px;
+        }
+        .faq-answer p {
+            font-size: 15px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* ============================================
+           PRICING
+           ============================================ */
+        .pricing-section {
+            padding: 100px 40px;
+            background: var(--bg-cream);
+            text-align: center;
+        }
+
+        .pricing-section h2 {
+            font-family: var(--font-display);
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 40px;
+        }
+
+        .pricing-card {
+            max-width: 400px;
+            margin: 0 auto;
+            background: var(--bg-white);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-xl);
+            padding: 44px 36px;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            overflow: hidden;
+        }
+        .pricing-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 20%;
+            right: 20%;
+            height: 3px;
+            background: var(--orange);
+            border-radius: 0 0 3px 3px;
+        }
+
+        .pricing-card .app-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .pricing-label {
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .pricing-amount {
+            font-family: var(--font-display);
+            font-size: 56px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .pricing-note {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 28px;
+        }
+
+        .pricing-card .btn {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .pricing-trial {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 16px;
+        }
+
+        /* ============================================
+           FOOTER
+           ============================================ */
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 32px 40px;
+            background: var(--bg-white);
+        }
+
+        .footer-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: var(--max-width);
+            margin: 0 auto 16px;
+        }
+
+        .footer-brand {
+            font-size: 16px;
+        }
+
+        .footer-center {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .footer-right {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+        .footer-right a {
+            color: var(--text-muted);
+        }
+        .footer-right a:hover {
+            color: var(--orange);
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-bottom: 12px;
+        }
+        .footer-links a {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+        .footer-links a:hover { color: var(--orange); }
+
+        .footer-copyright {
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* ============================================
+           DOWNLOAD MODAL (pre-launch)
+           ============================================ */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 200;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal-box {
+            background: var(--bg-white);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-xl);
+            padding: 48px 40px;
+            max-width: 440px;
+            width: 90%;
+            position: relative;
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+        }
+        .modal-overlay.active .modal-box {
+            transform: translateY(0);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--bg-light);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: var(--text-muted);
+            transition: all 0.2s;
+        }
+        .modal-close:hover {
+            background: var(--border);
+            color: var(--text-primary);
+        }
+
+        .modal-box h3 {
+            font-family: var(--font-display);
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+        .modal-box p {
+            font-size: 15px;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+
+        .modal-form {
+            display: flex;
+            gap: 10px;
+        }
+        .modal-form input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 15px;
+            font-family: var(--font-body);
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .modal-form input:focus {
+            border-color: var(--orange);
+        }
+        .modal-form button {
+            padding: 12px 24px;
+            background: var(--orange);
+            color: #fff;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            font-size: 15px;
+            font-family: var(--font-body);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .modal-form button:hover {
+            background: var(--orange-hover);
+        }
+
+        .modal-success {
+            display: none;
+            text-align: center;
+        }
+        .modal-success .checkmark {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: #E8F5E9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            font-size: 28px;
+        }
+        .modal-success p {
+            color: var(--text-secondary);
+        }
+
+        /* ============================================
+           FADE-UP ANIMATION
+           ============================================ */
+        .fade-up {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        .fade-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ============================================
+           RESPONSIVE
+           ============================================ */
+        @media (max-width: 900px) {
+            nav { padding: 0 24px; }
+            .hero { padding: 120px 24px 60px; }
+            .features, .showcase { padding: 60px 24px; }
+            .faq-section, .pricing-section { padding: 60px 24px; }
+            .feature-grid { grid-template-columns: repeat(2, 1fr); }
+            .showcase-row { flex-direction: column; gap: 32px; }
+            .showcase-row.reverse { flex-direction: column; }
+        }
+
+        @media (max-width: 640px) {
+            .feature-grid { grid-template-columns: 1fr; }
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            .hero-buttons .btn { max-width: 300px; width: 100%; }
+            .nav-buttons .btn-outline { display: none; }
+            .nav-buttons .btn-primary {
+                font-size: 13px;
+                padding: 8px 14px;
+            }
+            .footer-row {
+                flex-direction: column;
+                gap: 8px;
+                text-align: center;
+            }
+            .modal-form {
+                flex-direction: column;
+            }
+            footer { padding: 24px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ========== NAV ========== -->
+    <nav>
+        <a href="#" class="nav-brand">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="32" height="32" rx="8" fill="#FF6B35"/>
+                <rect x="6" y="8" width="20" height="13" rx="2" fill="white"/>
+                <rect x="13" y="22" width="6" height="2" rx="1" fill="white"/>
+                <rect x="11" y="25" width="10" height="1.5" rx="0.75" fill="white" opacity="0.6"/>
+            </svg>
+            <span class="brand-name">TeenyDisplay</span>
+        </a>
+        <div class="nav-buttons">
+            <a href="#" class="btn btn-outline download-trigger">Download App</a>
+            <a href="https://polar.sh/teenydisplay" class="btn btn-primary">Purchase License: $9.99</a>
+        </div>
+    </nav>
+
+    <!-- ========== HERO ========== -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1 class="fade-up">Control Your Displays <em>From Your Menu Bar</em></h1>
+            <p class="hero-sub fade-up">Brightness, contrast, volume, input switching &mdash; no more reaching for monitor buttons.</p>
+            <p class="hero-body fade-up">
+                <span class="brand-name">TeenyDisplay</span> gives you full DDC/CI control of your external monitors right from your Mac's menu bar. Adjust brightness, switch inputs, save presets, and automate with URL schemes. 3-day free trial, then just $9.99 &mdash; one time, forever.
+            </p>
+            <div class="hero-buttons fade-up">
+                <a href="#" class="btn btn-outline btn-large download-trigger">Download App</a>
+                <a href="https://polar.sh/teenydisplay" class="btn btn-primary btn-large">Purchase License: $9.99</a>
+            </div>
+            <div class="hero-media fade-up">
+                <div class="screenshot-placeholder">
+                    App screenshot will go here &mdash; menu bar popover with display controls
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== FEATURES: Core Controls ========== -->
+    <section class="features bg-cream" id="features">
+        <div class="section-inner">
+            <h2 class="fade-up">Everything Your Monitor OSD Does, Better</h2>
+            <p class="section-subtitle fade-up">Full DDC/CI hardware control over every external display connected to your Mac.</p>
+
+            <div class="feature-grid">
+                <div class="feature-card fade-up">
+                    <div class="icon">&#9728;&#65039;</div>
+                    <h3>Brightness Control</h3>
+                    <p>Hardware DDC brightness for external monitors. Software dimming fallback for displays without DDC. Smooth, instant, zero lag.</p>
+                </div>
+                <div class="feature-card fade-up">
+                    <div class="icon">&#9681;</div>
+                    <h3>Contrast &amp; Volume</h3>
+                    <p>Adjust contrast ratio and speaker volume on monitors that support them &mdash; no more digging through monitor OSD menus.</p>
+                </div>
+                <div class="feature-card fade-up">
+                    <div class="icon">&#128268;</div>
+                    <h3>Input Switching</h3>
+                    <p>Switch between HDMI, DisplayPort, USB-C, and more with one click. No more reaching behind your monitor.</p>
+                </div>
+                <div class="feature-card fade-up">
+                    <div class="icon">&#127899;&#65039;</div>
+                    <h3>Display Presets</h3>
+                    <p>Save your perfect setup as a named preset. One click restores brightness, contrast, volume, input, and resolution across all displays.</p>
+                </div>
+                <div class="feature-card fade-up">
+                    <div class="icon">&#9000;&#65039;</div>
+                    <h3>Keyboard Shortcuts</h3>
+                    <p>Intercept F1/F2 brightness keys for external monitors. Or set custom global shortcuts for any control. Fully configurable.</p>
+                </div>
+                <div class="feature-card fade-up">
+                    <div class="icon">&#128279;</div>
+                    <h3>Brightness Sync</h3>
+                    <p>Link multiple monitors together. Adjust one and all linked displays follow proportionally. Perfect for matched setups.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== SHOWCASE: Deep Features ========== -->
+    <section class="showcase bg-white">
+        <div class="section-inner">
+            <div class="showcase-row fade-up">
+                <div class="showcase-text">
+                    <h3>Lives in Your Menu Bar</h3>
+                    <p><span class="brand-name">TeenyDisplay</span> sits quietly in your menu bar until you need it. Click to open a compact popover showing every connected display with sliders for brightness, contrast, and volume. Expand or collapse each display. See DDC status, resolution, and connection type at a glance.</p>
+                </div>
+                <div class="showcase-image">
+                    <div class="screenshot-placeholder">Menu bar popover screenshot</div>
+                </div>
+            </div>
+
+            <div class="showcase-row reverse fade-up">
+                <div class="showcase-text">
+                    <h3>Your Keys, Your Displays</h3>
+                    <p>Intercept your Mac's native brightness keys so F1/F2 control your external monitor instead of the built-in display. Or set entirely custom shortcuts for brightness, contrast, and volume &mdash; up, down, on any display. Changes show a sleek on-screen display overlay.</p>
+                </div>
+                <div class="showcase-image">
+                    <div class="screenshot-placeholder">Keyboard shortcuts settings screenshot</div>
+                </div>
+            </div>
+
+            <div class="showcase-row fade-up">
+                <div class="showcase-text">
+                    <h3>Automate with URL Schemes</h3>
+                    <p>Script your displays with <code>teenydisplay://</code> URL commands. Set brightness, switch inputs, apply presets &mdash; all from Shortcuts, Raycast, AppleScript, or the terminal. Perfect for desk setup automations and focus modes.</p>
+                </div>
+                <div class="showcase-image">
+                    <div class="screenshot-placeholder">CLI / URL scheme example</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== FEATURES: Power Features ========== -->
+    <section class="features bg-cream">
+        <div class="section-inner">
+            <h2 class="fade-up">And Even More Power</h2>
+            <p class="section-subtitle fade-up">Resolution control, color profiles, Night Shift, and more.</p>
+
+            <div class="feature-grid">
+                <div class="feature-card fade-up">
+                    <div class="icon">&#128187;</div>
+                    <h3>Resolution &amp; Refresh Rate</h3>
+                    <p>Switch resolutions and refresh rates from the menu bar. See all available modes including HiDPI options. No more System Settings detours.</p>
+                </div>
+                <div class="feature-card fade-up">
+                    <div class="icon">&#127912;</div>
+                    <h3>Color Profiles</h3>
+                    <p>Browse and switch ICC color profiles per display. See the currently active profile and swap instantly for color-accurate work.</p>
+                </div>
+                <div class="feature-card fade-up">
+                    <div class="icon">&#127769;</div>
+                    <h3>Night Shift for Externals</h3>
+                    <p>macOS doesn't enable Night Shift on many external displays. <span class="brand-name">TeenyDisplay</span> adds the toggle so your eyes get a break on every screen.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== FAQ ========== -->
+    <section class="faq-section" id="faq">
+        <h2 class="fade-up">Frequently Asked Questions</h2>
+        <div class="faq-list">
+            <div class="faq-item">
+                <button class="faq-question">How much does TeenyDisplay cost?</button>
+                <div class="faq-answer">
+                    <p><span class="brand-name">TeenyDisplay</span> is $9.99 &mdash; a one-time purchase. You pay once and own it forever. No subscription, no recurring fees, no upgrade charges.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question">Is this a subscription?</button>
+                <div class="faq-answer">
+                    <p>No. <span class="brand-name">TeenyDisplay</span> is a one-time payment. You buy it once, it's yours. Forever. We don't do subscriptions.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question">What macOS version do I need?</button>
+                <div class="faq-answer">
+                    <p><span class="brand-name">TeenyDisplay</span> requires macOS 14 (Sonoma) or later. It supports both Apple Silicon and Intel Macs.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question">Does it need an internet connection?</button>
+                <div class="faq-answer">
+                    <p>Only for license activation (a one-time check). After that, <span class="brand-name">TeenyDisplay</span> works completely offline. All DDC communication happens directly over your display cable.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question">Does it collect my data?</button>
+                <div class="faq-answer">
+                    <p>No. <span class="brand-name">TeenyDisplay</span> doesn't collect, store, or transmit any personal data. All settings are stored locally on your Mac. There are no analytics, telemetry, or tracking of any kind.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question">Will it work with my monitor?</button>
+                <div class="faq-answer">
+                    <p><span class="brand-name">TeenyDisplay</span> works with most external monitors connected via USB-C, Thunderbolt, HDMI, or DisplayPort that support the DDC/CI protocol. This includes most modern monitors from LG, Dell, Samsung, BenQ, ASUS, and others. For monitors without DDC, software dimming is available as a fallback.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question">How do I report a bug?</button>
+                <div class="faq-answer">
+                    <p>Email us at <a href="mailto:support@teenydisplay.com">support@teenydisplay.com</a> with a description of the issue, your macOS version, and your monitor model. We'll get back to you as quickly as we can.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question">Can I request a feature?</button>
+                <div class="faq-answer">
+                    <p>Absolutely! Submit feature requests through our <a href="https://forms.gle/teenydisplay" target="_blank">feedback form</a> or email <a href="mailto:support@teenydisplay.com">support@teenydisplay.com</a>. We read every request.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== PRICING ========== -->
+    <section class="pricing-section" id="download">
+        <h2 class="fade-up">One Price. Forever.</h2>
+        <div class="pricing-card fade-up">
+            <div class="app-icon">
+                <svg width="48" height="48" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="32" height="32" rx="8" fill="#FF6B35"/>
+                    <rect x="6" y="8" width="20" height="13" rx="2" fill="white"/>
+                    <rect x="13" y="22" width="6" height="2" rx="1" fill="white"/>
+                    <rect x="11" y="25" width="10" height="1.5" rx="0.75" fill="white" opacity="0.6"/>
+                </svg>
+            </div>
+            <div class="pricing-label">Lifetime License</div>
+            <div class="pricing-amount">$9.99</div>
+            <div class="pricing-note">One-time payment. No subscription. Ever.</div>
+            <a href="https://polar.sh/teenydisplay" class="btn btn-primary btn-large">Purchase License: $9.99</a>
+            <a href="#" class="btn btn-outline btn-large download-trigger">Download App</a>
+            <div class="pricing-trial">3-day free trial with all features &mdash; no credit card required.</div>
+        </div>
+    </section>
+
+    <!-- ========== FOOTER ========== -->
+    <footer>
+        <div class="footer-row">
+            <span class="footer-brand brand-name">TeenyDisplay</span>
+            <span class="footer-center">Made for Mac</span>
+            <span class="footer-right">
+                <a href="mailto:support@teenydisplay.com">support@teenydisplay.com</a>
+                &nbsp;&middot;&nbsp;
+                <a href="https://forms.gle/teenydisplay" target="_blank">Feature Requests</a>
+            </span>
+        </div>
+        <div class="footer-links">
+            <a href="privacy.html">Privacy Policy</a>
+            <a href="terms.html">Terms and Conditions</a>
+        </div>
+        <div class="footer-copyright">&copy; 2026 TeenyDisplay. All rights reserved.</div>
+    </footer>
+
+    <!-- ========== DOWNLOAD MODAL (pre-launch) ========== -->
+    <div class="modal-overlay" id="downloadModal">
+        <div class="modal-box">
+            <button class="modal-close" id="modalClose">&times;</button>
+            <div id="modalContent">
+                <h3>Coming Soon</h3>
+                <p><span class="brand-name">TeenyDisplay</span> is almost ready. Enter your email and we'll let you know the moment it's available for download.</p>
+                <div class="modal-form" id="notifyForm">
+                    <input type="email" placeholder="you@example.com" id="emailInput" required>
+                    <button type="button" id="notifyBtn">Notify Me</button>
+                </div>
+            </div>
+            <div class="modal-success" id="modalSuccess">
+                <div class="checkmark">&#10003;</div>
+                <h3>You're on the list!</h3>
+                <p>We'll email you as soon as <span class="brand-name">TeenyDisplay</span> is ready to download.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== JAVASCRIPT ========== -->
+    <script>
+        // --- Nav scroll shadow ---
+        const nav = document.querySelector('nav');
+        window.addEventListener('scroll', () => {
+            nav.classList.toggle('scrolled', window.scrollY > 10);
+        });
+
+        // --- FAQ accordion toggle ---
+        document.querySelectorAll('.faq-question').forEach(btn => {
+            btn.addEventListener('click', () => {
+                btn.parentElement.classList.toggle('open');
+            });
+        });
+
+        // --- Download modal (pre-launch) ---
+        const modal = document.getElementById('downloadModal');
+        const modalContent = document.getElementById('modalContent');
+        const modalSuccess = document.getElementById('modalSuccess');
+        const modalClose = document.getElementById('modalClose');
+        const notifyBtn = document.getElementById('notifyBtn');
+        const emailInput = document.getElementById('emailInput');
+
+        // Open modal from all .download-trigger elements
+        document.querySelectorAll('.download-trigger').forEach(trigger => {
+            trigger.addEventListener('click', (e) => {
+                e.preventDefault();
+                modal.classList.add('active');
+            });
+        });
+
+        // Close modal
+        modalClose.addEventListener('click', () => modal.classList.remove('active'));
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) modal.classList.remove('active');
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') modal.classList.remove('active');
+        });
+
+        // Notify form submission
+        notifyBtn.addEventListener('click', () => {
+            const email = emailInput.value.trim();
+            if (email && email.includes('@')) {
+                modalContent.style.display = 'none';
+                modalSuccess.style.display = 'block';
+            }
+        });
+
+        // --- Fade-up animations ---
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+        document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+    </script>
+</body>
+</html>
