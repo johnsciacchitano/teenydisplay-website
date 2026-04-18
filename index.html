@@ -221,16 +221,32 @@
         }
 
         .hero h1 {
-            font-family: var(--font-display);
-            font-size: clamp(42px, 6vw, 64px);
+            font-family: 'Fraunces', serif;
+            font-size: clamp(48px, 7.5vw, 84px);
             font-weight: 700;
-            line-height: 1.1;
-            margin-bottom: 20px;
+            line-height: 0.98;
+            margin-bottom: 28px;
+            letter-spacing: -1.6px;
             color: var(--text-primary);
         }
-        .hero h1 em {
+
+        .hero h1 .underline-word {
             font-style: italic;
-            color: var(--orange);
+            position: relative;
+            display: inline-block;
+        }
+
+        .hero h1 .underline-word svg {
+            position: absolute;
+            bottom: -10px;
+            left: -3%;
+            width: 106%;
+            height: 20px;
+            stroke: var(--text-primary);
+            stroke-width: 3.5;
+            fill: none;
+            stroke-linecap: round;
+            pointer-events: none;
         }
 
         .hero-sub {
@@ -268,6 +284,214 @@
             font-size: 14px;
             text-align: center;
         }
+
+        /* ============================================
+           HERO STAGE + TEENYDISPLAY POPOVER
+           ============================================ */
+        .hero-stage {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 56px 40px 48px;
+            background:
+                radial-gradient(ellipse 60% 50% at 50% 20%, rgba(255, 107, 53, 0.08), transparent 70%),
+                linear-gradient(180deg, #f5f5f3, #ebebe6);
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-md);
+            display: flex;
+            justify-content: center;
+        }
+
+        .showcase-stage {
+            padding: 32px 20px;
+            background:
+                radial-gradient(ellipse 60% 50% at 50% 20%, rgba(255, 107, 53, 0.06), transparent 70%),
+                linear-gradient(180deg, #f5f5f3, #ebebe6);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Popover (mirrors MainPopoverView + DisplayControlView + SliderRow) */
+        .td {
+            width: 320px;
+            background: rgba(30, 30, 34, 0.92);
+            backdrop-filter: blur(32px) saturate(180%);
+            -webkit-backdrop-filter: blur(32px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            box-shadow:
+                0 24px 72px rgba(0, 0, 0, 0.3),
+                0 0 0 0.5px rgba(255, 255, 255, 0.04);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            color: rgba(235, 235, 245, 0.92);
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+            font-size: 13px;
+            line-height: 1.3;
+            text-align: left;
+        }
+
+        .td-divider { height: 0.5px; background: rgba(255, 255, 255, 0.1); }
+
+        .td-header { display: flex; align-items: center; padding: 10px 14px; }
+        .td-brand { display: flex; align-items: center; gap: 6px; }
+        .td-brand-icon { width: 13px; height: 13px; color: #FF9500; flex-shrink: 0; }
+        .td-brand-name { font-size: 13px; font-weight: 700; color: rgba(235, 235, 245, 0.95); letter-spacing: -0.15px; }
+        .td-spacer { flex: 1; }
+        .td-trial { font-size: 9px; font-weight: 600; color: #FF9500; background: rgba(255, 149, 0, 0.15); padding: 2px 6px; border-radius: 100px; margin-right: 6px; letter-spacing: 0.1px; }
+        .td-count { font-size: 10px; font-weight: 500; color: rgba(235, 235, 245, 0.6); background: rgba(235, 235, 245, 0.1); padding: 3px 7px; border-radius: 100px; }
+
+        .td-body { padding: 10px; display: flex; flex-direction: column; gap: 8px; }
+
+        .td-card { background: rgba(255, 255, 255, 0.03); border: 0.5px solid rgba(255, 255, 255, 0.06); border-radius: 8px; overflow: hidden; }
+        .td-card-head { display: flex; align-items: center; gap: 8px; padding: 10px 12px; }
+        .td-display-icon { width: 20px; height: 20px; display: grid; place-items: center; color: rgba(235, 235, 245, 0.9); flex-shrink: 0; }
+        .td-display-icon svg { width: 20px; height: 20px; }
+        .td-card-info { flex: 1; display: flex; flex-direction: column; gap: 1px; }
+        .td-card-name { font-size: 12px; font-weight: 600; color: rgba(235, 235, 245, 0.95); letter-spacing: -0.1px; }
+        .td-card-meta-row { display: flex; align-items: center; gap: 4px; }
+        .td-card-meta { font-size: 10px; color: rgba(235, 235, 245, 0.55); font-variant-numeric: tabular-nums; }
+        .td-conn-badge { font-size: 8.5px; font-weight: 600; color: rgba(235, 235, 245, 0.7); background: rgba(255, 255, 255, 0.08); padding: 1px 5px; border-radius: 3px; letter-spacing: 0.4px; }
+        .td-chevron { width: 10px; height: 10px; color: rgba(235, 235, 245, 0.4); flex-shrink: 0; }
+        .td-card-body { padding: 0 12px 12px; display: flex; flex-direction: column; gap: 8px; }
+
+        .td-slider { display: flex; align-items: center; gap: 10px; }
+        .td-slider-icon { width: 20px; display: grid; place-items: center; color: #FF9500; flex-shrink: 0; }
+        .td-slider-icon svg { width: 13px; height: 13px; }
+        .td-slider-track { flex: 1; height: 4px; background: rgba(255, 255, 255, 0.1); border-radius: 100px; position: relative; }
+        .td-slider-fill { position: absolute; top: 0; left: 0; bottom: 0; background: #FF9500; border-radius: 100px; }
+        .td-slider-thumb { position: absolute; top: 50%; width: 14px; height: 14px; background: #fff; border-radius: 50%; transform: translate(-50%, -50%); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3); }
+        .td-slider-val { width: 36px; text-align: right; font-size: 11px; font-weight: 500; font-family: 'SF Mono', ui-monospace, 'Menlo', monospace; color: rgba(235, 235, 245, 0.92); font-variant-numeric: tabular-nums; }
+
+        .td-dual-row { display: flex; gap: 6px; padding-top: 4px; }
+        .td-dual-row .btn { flex: 1; padding: 4px 6px; background: rgba(255, 255, 255, 0.06); border-radius: 4px; display: flex; align-items: center; justify-content: center; gap: 4px; font-size: 10px; font-weight: 500; color: rgba(235, 235, 245, 0.85); cursor: default; }
+        .td-dual-row .btn svg { width: 11px; height: 11px; opacity: 0.75; }
+        .td-dual-row .btn.muted { color: rgba(235, 235, 245, 0.55); }
+
+        .td-triple-row { display: flex; gap: 6px; }
+        .td-triple-row .btn { flex: 1; padding: 4px 6px; background: rgba(255, 255, 255, 0.06); border-radius: 4px; display: flex; align-items: center; justify-content: center; gap: 4px; font-size: 10px; font-weight: 500; color: rgba(235, 235, 245, 0.85); cursor: default; }
+        .td-triple-row .btn svg { width: 11px; height: 11px; opacity: 0.75; }
+
+        .td-preset-row { display: flex; gap: 6px; }
+        .td-preset-btn { flex: 1; padding: 5px 8px; background: rgba(255, 255, 255, 0.06); border-radius: 5px; display: flex; align-items: center; justify-content: center; gap: 3px; font-size: 10px; font-weight: 500; color: rgba(235, 235, 245, 0.85); cursor: default; }
+        .td-preset-btn svg { width: 11px; height: 11px; opacity: 0.8; }
+        .td-preset-btn .star { color: #FF9500; font-size: 7px; }
+
+        .td-footer { display: flex; align-items: center; padding: 8px 14px; }
+        .td-footer .spacer { flex: 1; }
+        .td-footer svg { color: rgba(235, 235, 245, 0.55); }
+        .td-footer .gear { width: 14px; height: 14px; }
+        .td-footer .power { width: 13px; height: 13px; }
+
+        /* Collapsed card variant (just the header) */
+        .td-card.collapsed .td-chevron { transform: rotate(180deg); }
+
+        /* Keyboard shortcut settings card (showcase row 2) */
+        .kbd-card {
+            width: 300px;
+            max-width: 100%;
+            background: rgba(30, 30, 34, 0.94);
+            backdrop-filter: blur(32px) saturate(180%);
+            -webkit-backdrop-filter: blur(32px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 14px 16px;
+            box-shadow: 0 16px 48px rgba(0,0,0,0.25);
+            color: rgba(235, 235, 245, 0.92);
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+            text-align: left;
+        }
+
+        .kbd-card-title {
+            font-size: 10px;
+            font-weight: 600;
+            color: rgba(235, 235, 245, 0.55);
+            letter-spacing: 0.6px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .kbd-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 9px 0;
+        }
+
+        .kbd-row + .kbd-row {
+            border-top: 0.5px solid rgba(255, 255, 255, 0.07);
+        }
+
+        .kbd-row-label {
+            font-size: 12.5px;
+            color: rgba(235, 235, 245, 0.92);
+        }
+
+        .kbd-row-keys {
+            display: flex;
+            gap: 4px;
+            align-items: center;
+        }
+
+        .kbd-k {
+            min-width: 24px;
+            padding: 2px 7px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.14), rgba(255,255,255,0.06));
+            border: 0.5px solid rgba(255,255,255,0.18);
+            border-bottom-width: 1.5px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 500;
+            color: rgba(235, 235, 245, 0.92);
+            text-align: center;
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+        }
+
+        .kbd-k svg {
+            width: 10px; height: 10px;
+            vertical-align: middle;
+            display: block;
+        }
+
+        .kbd-k-wide { min-width: 32px; }
+
+        .kbd-sep { color: rgba(235, 235, 245, 0.4); font-size: 11px; padding: 0 2px; }
+
+        /* URL scheme code block (showcase row 3) */
+        .code-block {
+            width: 360px;
+            max-width: 100%;
+            background: rgba(22, 22, 26, 0.96);
+            backdrop-filter: blur(32px) saturate(180%);
+            -webkit-backdrop-filter: blur(32px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 18px 20px;
+            box-shadow: 0 16px 48px rgba(0,0,0,0.25);
+            font-family: 'SF Mono', ui-monospace, 'Menlo', monospace;
+            font-size: 12px;
+            line-height: 1.9;
+            color: rgba(235, 235, 245, 0.85);
+            text-align: left;
+            overflow: hidden;
+        }
+
+        .code-block .prompt {
+            color: rgba(235, 235, 245, 0.35);
+            margin-right: 6px;
+            user-select: none;
+        }
+
+        .code-block .scheme { color: #FF9F0A; }
+        .code-block .path { color: #EDE9E3; font-weight: 500; }
+        .code-block .q { color: rgba(235,235,245,0.4); }
+        .code-block .key { color: #6AD7FF; }
+        .code-block .eq { color: rgba(235,235,245,0.4); }
+        .code-block .val { color: #B2E6A0; }
+        .code-block .amp { color: rgba(235,235,245,0.4); padding: 0 1px; }
 
         /* ============================================
            FEATURE CARD GRID
@@ -493,6 +717,8 @@
         .pricing-card .app-icon {
             font-size: 48px;
             margin-bottom: 16px;
+            display: flex;
+            justify-content: center;
         }
 
         .pricing-label {
@@ -657,18 +883,165 @@
     <!-- ========== HERO ========== -->
     <section class="hero">
         <div class="hero-content">
-            <h1 class="fade-up">Control Your Displays <em>From Your Menu Bar</em></h1>
-            <p class="hero-sub fade-up">Brightness, contrast, volume, input switching - no more reaching for monitor buttons.</p>
+            <h1 class="fade-up">Your displays, <span class="underline-word">dialed in.<svg viewBox="0 0 200 20" preserveAspectRatio="none" aria-hidden="true"><path d="M3,14 Q40,6 80,11 T160,9 Q180,8 197,11"/></svg></span></h1>
+            <p class="hero-sub fade-up">A menu bar display controller for Mac.</p>
             <p class="hero-body fade-up">
-                <span class="brand-name">teenydisplay</span> gives you full DDC/CI control of your external monitors right from your Mac's menu bar. Adjust brightness, contrast, and volume. Switch inputs, change resolutions, toggle power, and save presets. Works over USB-C, Thunderbolt, HDMI, and DisplayPort. 3-day free trial, then just $9.99 - one time, forever.
+                <span class="brand-name">teenydisplay</span> gives you full DDC/CI control of your external monitors from your Mac's menu bar. Brightness, contrast, volume, input switching, resolution, and presets. Works over USB-C, Thunderbolt, HDMI, and DisplayPort. 3-day free trial, then $9.99 once.
             </p>
             <div class="hero-buttons fade-up">
                 <a href="downloads/TeenyDisplay.dmg" download class="btn btn-outline btn-large">Download App</a>
                 <a href="https://buy.polar.sh/polar_cl_w3ETJIXjsNDC2rFlO2nqH2ErZDPMEshgbEEwQ0UFA1Q" class="btn btn-primary btn-large">Purchase License: $9.99</a>
             </div>
-            <div class="hero-media fade-up">
-                <div class="screenshot-placeholder">
-                    App screenshot will go here - menu bar popover with display controls
+            <div class="hero-stage fade-up" aria-hidden="true">
+                <div class="td">
+                    <div class="td-header">
+                        <div class="td-brand">
+                            <svg class="td-brand-icon" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                                <rect x="3" y="2" width="11" height="7" rx="1" fill="none" stroke="currentColor" stroke-width="1.2"/>
+                                <rect x="1.5" y="6" width="11" height="7" rx="1" fill="#2a2a32" stroke="currentColor" stroke-width="1.2"/>
+                            </svg>
+                            <span class="td-brand-name">TeenyDisplay</span>
+                        </div>
+                        <span class="td-spacer"></span>
+                        <span class="td-count">1 display</span>
+                    </div>
+                    <div class="td-divider"></div>
+                    <div class="td-body">
+                        <div class="td-card">
+                            <div class="td-card-head">
+                                <div class="td-display-icon">
+                                    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <rect x="2" y="3" width="16" height="11" rx="1.2"/>
+                                        <path d="M7 17h6M10 14v3"/>
+                                    </svg>
+                                </div>
+                                <div class="td-card-info">
+                                    <div class="td-card-name">Dell U2719D</div>
+                                    <div class="td-card-meta-row">
+                                        <span class="td-card-meta">2560&times;1440 @ 60Hz</span>
+                                        <span class="td-conn-badge">HDMI</span>
+                                    </div>
+                                </div>
+                                <svg class="td-chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M4 10l4-4 4 4"/>
+                                </svg>
+                            </div>
+                            <div class="td-card-body">
+                                <div class="td-slider">
+                                    <div class="td-slider-icon">
+                                        <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                                            <circle cx="8" cy="8" r="3"/>
+                                            <g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" fill="none">
+                                                <path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.5 3.5l1.3 1.3M11.2 11.2l1.3 1.3M3.5 12.5l1.3-1.3M11.2 4.8l1.3-1.3"/>
+                                            </g>
+                                        </svg>
+                                    </div>
+                                    <div class="td-slider-track">
+                                        <div class="td-slider-fill" style="width: 75%"></div>
+                                        <div class="td-slider-thumb" style="left: 75%"></div>
+                                    </div>
+                                    <span class="td-slider-val">75%</span>
+                                </div>
+                                <div class="td-slider">
+                                    <div class="td-slider-icon">
+                                        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true">
+                                            <circle cx="8" cy="8" r="6"/>
+                                            <path d="M8 2a6 6 0 0 1 0 12z" fill="currentColor"/>
+                                        </svg>
+                                    </div>
+                                    <div class="td-slider-track">
+                                        <div class="td-slider-fill" style="width: 60%"></div>
+                                        <div class="td-slider-thumb" style="left: 60%"></div>
+                                    </div>
+                                    <span class="td-slider-val">60%</span>
+                                </div>
+                                <div class="td-slider">
+                                    <div class="td-slider-icon">
+                                        <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                                            <path d="M7 3L3.5 6H1.5v4H3.5L7 13V3z"/>
+                                            <path d="M10 5.5a3 3 0 0 1 0 5M12 3.5a5 5 0 0 1 0 9" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+                                        </svg>
+                                    </div>
+                                    <div class="td-slider-track">
+                                        <div class="td-slider-fill" style="width: 42%"></div>
+                                        <div class="td-slider-thumb" style="left: 42%"></div>
+                                    </div>
+                                    <span class="td-slider-val">42%</span>
+                                </div>
+                                <div class="td-dual-row">
+                                    <div class="btn">
+                                        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" aria-hidden="true">
+                                            <rect x="2" y="3" width="12" height="10" rx="1"/>
+                                            <path d="M5 8h6M8 5v6" stroke-dasharray="1 2"/>
+                                        </svg>
+                                        Resolution
+                                    </div>
+                                    <div class="btn muted">
+                                        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" aria-hidden="true">
+                                            <path d="M8 2a6 6 0 1 0 0 12c.8 0 1.5-.2 2.1-.5.5-.3.9-.8.9-1.5s-.4-1.2-1-1.5c-.5-.3-.6-.8-.3-1.2.3-.5.8-.6 1.3-.4 1.8.4 3-.5 3-2.4A6 6 0 0 0 8 2z"/>
+                                            <circle cx="5.5" cy="6" r="1" fill="currentColor"/>
+                                            <circle cx="8.5" cy="4.5" r="1" fill="currentColor"/>
+                                            <circle cx="11.5" cy="7" r="1" fill="currentColor"/>
+                                        </svg>
+                                        sRGB
+                                    </div>
+                                </div>
+                                <div class="td-triple-row">
+                                    <div class="btn">
+                                        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" aria-hidden="true">
+                                            <rect x="2" y="4" width="12" height="6" rx="1"/>
+                                            <path d="M5 13h6M8 10v3" stroke-linecap="round"/>
+                                        </svg>
+                                        Input
+                                    </div>
+                                    <div class="btn">
+                                        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" aria-hidden="true">
+                                            <path d="M11.5 4a5.5 5.5 0 1 1-7 0"/>
+                                            <path d="M8 1.5v6"/>
+                                        </svg>
+                                        Power
+                                    </div>
+                                    <div class="btn">
+                                        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true">
+                                            <circle cx="8" cy="8" r="6"/>
+                                            <path d="M8 11V7.5M8 5v.01" stroke-linecap="round"/>
+                                        </svg>
+                                        Info
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="td-preset-row">
+                            <div class="td-preset-btn">
+                                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" aria-hidden="true">
+                                    <rect x="2" y="3" width="12" height="3" rx="0.5"/>
+                                    <rect x="2" y="8" width="12" height="3" rx="0.5"/>
+                                    <path d="M4.5 13h7" stroke-linecap="round"/>
+                                </svg>
+                                Presets
+                                <span class="star">&#9733;</span>
+                            </div>
+                            <div class="td-preset-btn">
+                                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true">
+                                    <circle cx="8" cy="8" r="6.5"/>
+                                    <path d="M5 8h6M8 5v6"/>
+                                </svg>
+                                Save Preset
+                            </div>
+                        </div>
+                    </div>
+                    <div class="td-divider"></div>
+                    <div class="td-footer">
+                        <svg class="gear" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <circle cx="8" cy="8" r="2.2"/>
+                            <path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.5 3.5l1.5 1.5M11 11l1.5 1.5M3.5 12.5l1.5-1.5M11 5l1.5-1.5"/>
+                        </svg>
+                        <span class="spacer"></span>
+                        <svg class="power" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" aria-hidden="true">
+                            <path d="M11.5 4a5.5 5.5 0 1 1-7 0"/>
+                            <path d="M8 1.5v6"/>
+                        </svg>
+                    </div>
                 </div>
             </div>
         </div>
@@ -724,7 +1097,119 @@
                     <p><span class="brand-name">teenydisplay</span> sits quietly in your menu bar until you need it. Click to open a compact popover showing every connected display with sliders for brightness, contrast, and volume, plus input switching, power control, and a resolution picker. Save or apply presets right from the popover. Expand or collapse each display. See DDC status, connection type, and resolution at a glance.</p>
                 </div>
                 <div class="showcase-image">
-                    <div class="screenshot-placeholder">Menu bar popover screenshot</div>
+                    <div class="showcase-stage">
+                        <div class="td">
+                            <div class="td-header">
+                                <div class="td-brand">
+                                    <svg class="td-brand-icon" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                                        <rect x="3" y="2" width="11" height="7" rx="1" fill="none" stroke="currentColor" stroke-width="1.2"/>
+                                        <rect x="1.5" y="6" width="11" height="7" rx="1" fill="#2a2a32" stroke="currentColor" stroke-width="1.2"/>
+                                    </svg>
+                                    <span class="td-brand-name">TeenyDisplay</span>
+                                </div>
+                                <span class="td-spacer"></span>
+                                <span class="td-count">2 displays</span>
+                            </div>
+                            <div class="td-divider"></div>
+                            <div class="td-body">
+                                <div class="td-card">
+                                    <div class="td-card-head">
+                                        <div class="td-display-icon">
+                                            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                                <rect x="3" y="5" width="14" height="8" rx="1"/>
+                                                <path d="M9 17h2M10 13v4"/>
+                                            </svg>
+                                        </div>
+                                        <div class="td-card-info">
+                                            <div class="td-card-name">MacBook Pro</div>
+                                            <div class="td-card-meta-row">
+                                                <span class="td-card-meta">3024&times;1964 @ 120Hz</span>
+                                                <span class="td-conn-badge">BUILT-IN</span>
+                                            </div>
+                                        </div>
+                                        <svg class="td-chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                            <path d="M4 6l4 4 4-4"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="td-card">
+                                    <div class="td-card-head">
+                                        <div class="td-display-icon">
+                                            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                                <rect x="2" y="3" width="16" height="11" rx="1.2"/>
+                                                <path d="M7 17h6M10 14v3"/>
+                                            </svg>
+                                        </div>
+                                        <div class="td-card-info">
+                                            <div class="td-card-name">Dell U2719D</div>
+                                            <div class="td-card-meta-row">
+                                                <span class="td-card-meta">2560&times;1440 @ 60Hz</span>
+                                                <span class="td-conn-badge">HDMI</span>
+                                            </div>
+                                        </div>
+                                        <svg class="td-chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                            <path d="M4 10l4-4 4 4"/>
+                                        </svg>
+                                    </div>
+                                    <div class="td-card-body">
+                                        <div class="td-slider">
+                                            <div class="td-slider-icon">
+                                                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                                                    <circle cx="8" cy="8" r="3"/>
+                                                    <g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" fill="none">
+                                                        <path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.5 3.5l1.3 1.3M11.2 11.2l1.3 1.3M3.5 12.5l1.3-1.3M11.2 4.8l1.3-1.3"/>
+                                                    </g>
+                                                </svg>
+                                            </div>
+                                            <div class="td-slider-track">
+                                                <div class="td-slider-fill" style="width: 75%"></div>
+                                                <div class="td-slider-thumb" style="left: 75%"></div>
+                                            </div>
+                                            <span class="td-slider-val">75%</span>
+                                        </div>
+                                        <div class="td-slider">
+                                            <div class="td-slider-icon">
+                                                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true">
+                                                    <circle cx="8" cy="8" r="6"/>
+                                                    <path d="M8 2a6 6 0 0 1 0 12z" fill="currentColor"/>
+                                                </svg>
+                                            </div>
+                                            <div class="td-slider-track">
+                                                <div class="td-slider-fill" style="width: 60%"></div>
+                                                <div class="td-slider-thumb" style="left: 60%"></div>
+                                            </div>
+                                            <span class="td-slider-val">60%</span>
+                                        </div>
+                                        <div class="td-slider">
+                                            <div class="td-slider-icon">
+                                                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                                                    <path d="M7 3L3.5 6H1.5v4H3.5L7 13V3z"/>
+                                                    <path d="M10 5.5a3 3 0 0 1 0 5M12 3.5a5 5 0 0 1 0 9" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+                                                </svg>
+                                            </div>
+                                            <div class="td-slider-track">
+                                                <div class="td-slider-fill" style="width: 42%"></div>
+                                                <div class="td-slider-thumb" style="left: 42%"></div>
+                                            </div>
+                                            <span class="td-slider-val">42%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="td-divider"></div>
+                            <div class="td-footer">
+                                <svg class="gear" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <circle cx="8" cy="8" r="2.2"/>
+                                    <path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.5 3.5l1.5 1.5M11 11l1.5 1.5M3.5 12.5l1.5-1.5M11 5l1.5-1.5"/>
+                                </svg>
+                                <span class="spacer"></span>
+                                <svg class="power" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" aria-hidden="true">
+                                    <path d="M11.5 4a5.5 5.5 0 1 1-7 0"/>
+                                    <path d="M8 1.5v6"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -734,17 +1219,71 @@
                     <p>Intercept your Mac's native brightness keys (F1/F2) and volume keys so they control your external monitors instead of the built-in display. Or set entirely custom global shortcuts for brightness, contrast, and volume. A native on-screen display appears on the correct monitor showing the current level. When no external displays are connected, keys pass through to macOS normally.</p>
                 </div>
                 <div class="showcase-image">
-                    <div class="screenshot-placeholder">Keyboard shortcuts settings screenshot</div>
+                    <div class="showcase-stage">
+                        <div class="kbd-card">
+                            <div class="kbd-card-title">Global Shortcuts</div>
+                            <div class="kbd-row">
+                                <span class="kbd-row-label">Brightness up</span>
+                                <div class="kbd-row-keys">
+                                    <span class="kbd-k kbd-k-wide">F2</span>
+                                    <span class="kbd-sep">/</span>
+                                    <span class="kbd-k">&#8984;</span>
+                                    <span class="kbd-k">&#8997;</span>
+                                    <span class="kbd-k kbd-k-wide">]</span>
+                                </div>
+                            </div>
+                            <div class="kbd-row">
+                                <span class="kbd-row-label">Brightness down</span>
+                                <div class="kbd-row-keys">
+                                    <span class="kbd-k kbd-k-wide">F1</span>
+                                    <span class="kbd-sep">/</span>
+                                    <span class="kbd-k">&#8984;</span>
+                                    <span class="kbd-k">&#8997;</span>
+                                    <span class="kbd-k kbd-k-wide">[</span>
+                                </div>
+                            </div>
+                            <div class="kbd-row">
+                                <span class="kbd-row-label">Contrast up / down</span>
+                                <div class="kbd-row-keys">
+                                    <span class="kbd-k">&#8984;</span>
+                                    <span class="kbd-k">&#8679;</span>
+                                    <span class="kbd-k kbd-k-wide">]</span>
+                                </div>
+                            </div>
+                            <div class="kbd-row">
+                                <span class="kbd-row-label">Volume up / down</span>
+                                <div class="kbd-row-keys">
+                                    <span class="kbd-k kbd-k-wide">F11</span>
+                                    <span class="kbd-sep">/</span>
+                                    <span class="kbd-k kbd-k-wide">F12</span>
+                                </div>
+                            </div>
+                            <div class="kbd-row">
+                                <span class="kbd-row-label">Step size</span>
+                                <div class="kbd-row-keys">
+                                    <span class="kbd-k kbd-k-wide" style="min-width: 46px">5%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
             <div class="showcase-row fade-up">
                 <div class="showcase-text">
                     <h3>Automate with URL Schemes</h3>
-                    <p>Script your displays with <code>teenydisplay://</code> URL commands. Set brightness, switch inputs, apply presets, toggle power, and more - all from Shortcuts, Alfred workflows, or other automation tools. Perfect for desk setup automations and focus modes.</p>
+                    <p>Script your displays with <code>teenydisplay://</code> URL commands. Set brightness, switch inputs, apply presets, toggle power, and more. Works from Shortcuts, Alfred workflows, and other automation tools. Perfect for desk setup automations and focus modes.</p>
                 </div>
                 <div class="showcase-image">
-                    <div class="screenshot-placeholder">CLI / URL scheme example</div>
+                    <div class="showcase-stage">
+                        <div class="code-block">
+                            <div><span class="prompt">$</span><span class="scheme">teenydisplay://</span><span class="path">brightness</span><span class="q">?</span><span class="key">display</span><span class="eq">=</span><span class="val">1</span><span class="amp">&amp;</span><span class="key">value</span><span class="eq">=</span><span class="val">75</span></div>
+                            <div><span class="prompt">$</span><span class="scheme">teenydisplay://</span><span class="path">brightness</span><span class="q">?</span><span class="key">display</span><span class="eq">=</span><span class="val">all</span><span class="amp">&amp;</span><span class="key">delta</span><span class="eq">=</span><span class="val">-10</span></div>
+                            <div><span class="prompt">$</span><span class="scheme">teenydisplay://</span><span class="path">input</span><span class="q">?</span><span class="key">display</span><span class="eq">=</span><span class="val">1</span><span class="amp">&amp;</span><span class="key">value</span><span class="eq">=</span><span class="val">17</span></div>
+                            <div><span class="prompt">$</span><span class="scheme">teenydisplay://</span><span class="path">preset</span><span class="q">?</span><span class="key">name</span><span class="eq">=</span><span class="val">Work</span></div>
+                            <div><span class="prompt">$</span><span class="scheme">teenydisplay://</span><span class="path">power</span><span class="q">?</span><span class="key">display</span><span class="eq">=</span><span class="val">1</span><span class="amp">&amp;</span><span class="key">value</span><span class="eq">=</span><span class="val">off</span></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
